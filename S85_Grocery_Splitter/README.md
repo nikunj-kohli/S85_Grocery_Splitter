@@ -8,4 +8,4 @@ Main Features:
     Expense Splitting: Automatically splits the overall costs according to item usage or equally.
     History Maintenance: Record of previous grocery bills and settlements.
     Real-time Updates: Syncs on changes instantly as a new item is created.
-    Payment Trace: Keeps track of already paid and due amounts.....
+    Payment Trace: Keeps track of already paid and due amounts.
