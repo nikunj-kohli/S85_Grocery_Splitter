@@ -14,4 +14,11 @@ const connectDatabase = () => {
     });
 };
 
-module.exports = connectDatabase;
+const getDBFunc = async () => {
+  if (!mongoose.connection.readyState) {
+    await connectDatabase();
+  }
+  return mongoose.connection.db;
+};
+
+module.exports = { connectDatabase, getDBFunc };
