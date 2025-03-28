@@ -12,3 +12,4 @@ Main Features:
 
 
     Render Project Link : https://dashboard.render.com/web/srv-cumr5cl2ng1s739pdgpg
+    Netlify deployed link : https://grocerysplitter85.netlify.app/
