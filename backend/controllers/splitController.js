@@ -1,10 +1,19 @@
 const Split = require('../model/Split');
 
-// Create a new split
+// Create a new split with validation
 exports.createSplit = async (req, res) => {
+  const { name, members } = req.body;
+
+  // Validation
+  if (!name || typeof name !== 'string' || !name.trim()) {
+    return res.status(400).json({ error: 'Split name is required and must be a non-empty string.' });
+  }
+  if (!Array.isArray(members) || members.length === 0 || members.some(m => typeof m !== 'string' || !m.trim())) {
+    return res.status(400).json({ error: 'Members must be a non-empty array of non-empty strings.' });
+  }
+
   try {
-    const { name, members } = req.body;
-    const split = new Split({ name, members });
+    const split = new Split({ name: name.trim(), members: members.map(m => m.trim()) });
     await split.save();
     res.status(201).json(split);
   } catch (err) {
@@ -22,13 +31,22 @@ exports.getSplits = async (req, res) => {
   }
 };
 
-// Update a split
+// Update a split with validation
 exports.updateSplit = async (req, res) => {
+  const { name, members } = req.body;
+
+  // Validation
+  if (!name || typeof name !== 'string' || !name.trim()) {
+    return res.status(400).json({ error: 'Split name is required and must be a non-empty string.' });
+  }
+  if (!Array.isArray(members) || members.length === 0 || members.some(m => typeof m !== 'string' || !m.trim())) {
+    return res.status(400).json({ error: 'Members must be a non-empty array of non-empty strings.' });
+  }
+
   try {
-    const { name, members } = req.body;
     const split = await Split.findByIdAndUpdate(
       req.params.id,
-      { name, members },
+      { name: name.trim(), members: members.map(m => m.trim()) },
       { new: true }
     );
     res.json(split);
