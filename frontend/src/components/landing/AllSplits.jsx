@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Table, Button, Form, InputGroup, Modal, Alert } from 'react-bootstrap';
+import { Card, Table, Button, Form, InputGroup, Modal, Alert, Row, Col } from 'react-bootstrap';
 
 function AllSplits() {
   const [splits, setSplits] = useState([]);
@@ -8,6 +8,7 @@ function AllSplits() {
   const [showEdit, setShowEdit] = useState(false);
   const [notification, setNotification] = useState('');
   const [confirmDelete, setConfirmDelete] = useState({ show: false, id: null });
+  const [selectedUser, setSelectedUser] = useState('');
 
   // Fetch all splits
   const fetchSplits = () => {
@@ -19,6 +20,9 @@ function AllSplits() {
   useEffect(() => {
     fetchSplits();
   }, []);
+
+  // Unique users for filter dropdown
+  const users = Array.from(new Set(splits.map(s => s.created_by))).filter(Boolean);
 
   // Handle delete
   const handleDelete = async (id) => {
@@ -46,7 +50,8 @@ function AllSplits() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name: editSplit.name,
-        members: editSplit.members.split(',').map(m => m.trim())
+        members: editSplit.members.split(',').map(m => m.trim()),
+        created_by: editSplit.created_by
       }),
     });
     setShowEdit(false);
@@ -55,8 +60,9 @@ function AllSplits() {
     fetchSplits();
   };
 
-  // Filter splits by search
+  // Filter splits by search and selected user
   const filteredSplits = splits.filter(split =>
+    (!selectedUser || split.created_by === selectedUser) &&
     split.name.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -66,19 +72,35 @@ function AllSplits() {
       {notification && (
         <Alert variant="success" className="text-center">{notification}</Alert>
       )}
-      <InputGroup className="mb-3" style={{ maxWidth: 400 }}>
-        <Form.Control
-          placeholder="Search splits..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
-      </InputGroup>
+      <Row className="mb-3">
+        <Col md={6}>
+          <InputGroup>
+            <Form.Control
+              placeholder="Search splits..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+          </InputGroup>
+        </Col>
+        <Col md={6}>
+          <Form.Select
+            value={selectedUser}
+            onChange={e => setSelectedUser(e.target.value)}
+          >
+            <option value="">Filter by User</option>
+            {users.map(user => (
+              <option key={user} value={user}>{user}</option>
+            ))}
+          </Form.Select>
+        </Col>
+      </Row>
       <Table hover responsive>
         <thead>
           <tr>
             <th>Split Name</th>
             <th>Date</th>
             <th>Members</th>
+            <th>Created By</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -92,6 +114,7 @@ function AllSplits() {
                   <span key={i} className="badge bg-light text-dark me-1">{m}</span>
                 ))}
               </td>
+              <td>{split.created_by}</td>
               <td>
                 <Button size="sm" variant="outline-primary" className="me-2" onClick={() => handleEdit(split)}>
                   Edit
@@ -129,6 +152,15 @@ function AllSplits() {
               <Form.Control
                 name="members"
                 value={editSplit?.members || ''}
+                onChange={handleEditChange}
+                required
+              />
+            </Form.Group>
+            <Form.Group className="mb-2">
+              <Form.Label>Created By</Form.Label>
+              <Form.Control
+                name="created_by"
+                value={editSplit?.created_by || ''}
                 onChange={handleEditChange}
                 required
               />
