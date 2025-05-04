@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Form } from 'react-bootstrap';
-
-const USERS = ['Alice', 'Bob', 'Charlie', 'David']; // Example user list
 
 function AddSplit({ onSplitAdded }) {
   const [name, setName] = useState('');
   const [members, setMembers] = useState('');
   const [createdBy, setCreatedBy] = useState('');
+  const [users, setUsers] = useState([]);
+
+  // Fetch users from MySQL endpoint for this assignment
+  useEffect(() => {
+    fetch('/api/users-mysql')
+      .then(res => res.json())
+      .then(data => setUsers(data));
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch('/api/splits', {
+    const res = await fetch('/api/splits-mysql', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -53,8 +59,8 @@ function AddSplit({ onSplitAdded }) {
           required
         >
           <option value="">Select User</option>
-          {USERS.map(user => (
-            <option key={user} value={user}>{user}</option>
+          {users.map(user => (
+            <option key={user.id} value={user.id}>{user.name}</option>
           ))}
         </Form.Select>
       </Form.Group>
