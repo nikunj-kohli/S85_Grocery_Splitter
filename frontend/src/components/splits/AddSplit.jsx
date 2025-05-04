@@ -3,19 +3,22 @@ import { Button, Form } from 'react-bootstrap';
 
 function AddSplit({ onSplitAdded }) {
   const [name, setName] = useState('');
-  const [amount, setAmount] = useState('');
+  const [members, setMembers] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const res = await fetch('/api/splits', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, amount }),
+      body: JSON.stringify({
+        name,
+        members: members.split(',').map(m => m.trim())
+      }),
     });
     if (res.ok) {
       setName('');
-      setAmount('');
-      if (onSplitAdded) onSplitAdded(name); // Pass split name here
+      setMembers('');
+      if (onSplitAdded) onSplitAdded(name);
     }
   };
 
@@ -30,11 +33,10 @@ function AddSplit({ onSplitAdded }) {
         />
       </Form.Group>
       <Form.Group className="mb-2">
-        <Form.Label>Amount</Form.Label>
+        <Form.Label>Members (comma separated)</Form.Label>
         <Form.Control
-          type="number"
-          value={amount}
-          onChange={e => setAmount(e.target.value)}
+          value={members}
+          onChange={e => setMembers(e.target.value)}
           required
         />
       </Form.Group>
