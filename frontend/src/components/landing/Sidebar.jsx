@@ -22,8 +22,8 @@ function Sidebar() {
       <Link to="/settle-up" className={linkClass('/settle-up')}>
         Settle Up
       </Link>
-      <Link to="/split-history" className={linkClass('/split-history')}>
-        Split History
+      <Link to="/all-splits" className={linkClass('/all-splits')}>
+        All Splits
       </Link>
       <Link to="/contact" className={linkClass('/contact')}>
         Contact Us
